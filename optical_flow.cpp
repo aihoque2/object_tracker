@@ -56,7 +56,7 @@ Mat get_corners(Mat Image){ //1-channel image for input
 
 int main(){
 
-	string filename = "data/images/Test21_1.tif";
+	string filename = "";
 	Mat div, cornerImg;	
 
 	Mat image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
