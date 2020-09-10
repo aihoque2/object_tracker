@@ -4,7 +4,7 @@ using namespace std;
 using namespace cv;
 
 
-Mat dataCollector::process_division(Mat image){
+Mat dataCollector::procesRectDivision(Mat image){
 	/*take in a 1-channel grayscale image and 
 	 * return the division of the processed vs 
 	 * original image
@@ -16,7 +16,7 @@ Mat dataCollector::process_division(Mat image){
 
         //cvtColor(image, gray, CV_BGR2GRAY);// gray in case of emergency
 
-        Mat kernel = getStructuringElement(MORPH_RECT, Size(5,5));
+        Mat kernel = getStructuringElement(MORPH_RECT, Size(7,7));
 
         morphologyEx(image, smooth, MORPH_DILATE, kernel); //bring out everything
 
@@ -27,6 +27,18 @@ Mat dataCollector::process_division(Mat image){
 
 }
 
+Mat dataCollector::processCircDivision(Mat image){
+	/*take in a 1-channel grayscale image and
+	 * retunr a division of the processed image
+	 * that brings out the circular features
+	 * used in detectCircles()*/
+
+}
+
+vector<Vec3f> dataCollector::detectCircles(Mat image){
+	
+
+}
 
 
 void dataCollector::run(){	

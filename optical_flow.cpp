@@ -19,7 +19,7 @@ Mat process_division(Mat image){
 
         //cvtColor(image, gray, CV_BGR2GRAY);// gray in case of emergency
 
-        Mat kernel = getStructuringElement(MORPH_RECT, Size(5,5));
+        Mat kernel = getStructuringElement(MORPH_RECT, Size(7,7));
 
         morphologyEx(image, smooth, MORPH_DILATE, kernel); //bring out everything
 
@@ -38,7 +38,7 @@ vector<Point2f> get_corners(Mat image){ //1 channel image will do
 	
 
 	vector<Point2f> corners; //our return
-	double qualityLevel = 0.01;
+	double qualityLevel = 0.1;
 	double minDistance = 10;
 	int blockSize = 3;
 	bool useHarrisDetector = false;
@@ -91,5 +91,7 @@ int main(){
 	imshow("Display Window", copy);
 	waitKey(0);
 	return 0;
+
+
 }
 

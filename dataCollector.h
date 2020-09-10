@@ -21,12 +21,17 @@ class dataCollector{
 						     set the filename with this setter func*/
 		
 		//our image processing gets run here
-		Mat processDivision(Mat image);
-#include </home/ahoque245/Research/biological_machines/C++/process_images.cpp>
+		Mat processRectDivision(Mat image); //bring out the squares
+		Mat processCircDivision(Mat image); //bring out the circles
+		vector<Vec3f> detectCircles; //detect circles for our function
+
+		
+		
+
 		void run(); //this is where the tracking algorithm is run
 	
 	
 	private:
 		string filename //this is important data. protecc it at all times
-		
+		vector<Point2f> boundingBoxes	
 };
