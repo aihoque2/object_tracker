@@ -1,12 +1,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <dataCollector.h>
+#include "process_images.cpp"
 #include <iostream>
 
 using namespace std;
 using namespace cv;
-
+/*
 Mat process_division(Mat image){                                                                      
         //note: this takes in 1-channel images for input                                              
         Mat gray, smooth, dst;                                                                        
@@ -22,7 +22,7 @@ Mat process_division(Mat image){
         return dst;                                                                                   
                                                                                                       
 }                                                                                                     
-                                                                                                      
+*/                                                                                                    
 
 int main(){
 
@@ -32,8 +32,8 @@ int main(){
 		return -1;
 	}
 
-	Mat divided = process_division(image);
-
+	//Mat divided = process_division(image);
+	Mat divided = processRectDivision(image);
 	namedWindow("Display window", WINDOW_AUTOSIZE);
 	imshow("Display window", divided);
 

@@ -7,6 +7,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imageproc.hpp>
 #include <opencv2/highgui.hpp>
+#include <process_images.h>
+
 
 using namespace cv;
 using namespace std;
@@ -21,8 +23,6 @@ class dataCollector{
 						     set the filename with this setter func*/
 		
 		//our image processing gets run here
-		Mat processRectDivision(Mat image); //bring out the squares
-		Mat processCircDivision(Mat image); //bring out the circles
 		vector<Vec3f> detectCircles; //detect circles for our function
 
 		
@@ -33,5 +33,6 @@ class dataCollector{
 	
 	private:
 		string filename //this is important data. protecc it at all times
-		vector<Point2f> boundingBoxes	
+		vector<Point2f> boundingBoxes;
+		vector<Vec3f> circles;
 };
