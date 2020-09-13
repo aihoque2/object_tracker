@@ -30,14 +30,39 @@ Mat process_division_circle(Mat image){
 }
 
 
-vector<Vec3f> get_circles(Mat image){
+Rect circle_to_square(int x, int y, int r){ //fun fact: openCV has a Rect_ class for rectangles
+        /*create a rectangle from the given 
+        * circle ands its center points
+        * radius size for the square is 
+        * gonna be like 60 or 70 */
+
+        int cornerX = x - 50;
+        int cornerY = y - 50;
+        Point corner(cornerX, cornerY);
+        Size squareDim(100,100);
+
+        Rect ret(corner, squareDim);
+
+        return ret;
+
+
+}
+
+
+
+vector<Rect> get_objects(Mat image){
 	/*take grayscale image and return
-	 * predicted circles in the valid area
+	 * predicted bounding boxes in the valid area
 	 * 
 	 * output: a vector containing the circles
 	 * */
 
 	vector<Vec3f> circles;
+	vector<Rect> boxes;
+
+	int boxRadius = 50; //parameter might need tuning
+
+
 	Mat div = process_division_circle(image);
 	
 	//get our circles
@@ -51,54 +76,45 @@ vector<Vec3f> get_circles(Mat image){
 		else if (circles[i][1] < 100 || circles[i][1] >900){
 			circles.erase(circles.begin() + i);
 		}
+
+		//normal case
+		else{
+			Rect toPush = circle_to_square(cvRound(circles[i][0]), cvRound(circles[i][1]), boxRadius);
+			boxes.push_back(toPush);
+		
+		}
 	
 	} 
 	
-	return circles;
+	return boxes;
 
 }
 
 
-Rect circle_to_square(int x, int y, int r){ //fun fact: openCV has a Rect_ class for rectangles
-	/*create a rectangle from the given 
-	* circle ands its center points
-	* radius size for the square is 
-	* gonna be like 60 or 70 */
-
-	int cornerX = x - 70; 
-	int cornerY = y - 70;
-	int width, height = 3;
-
-	Rect ret(cornerX, cornerY, width, width);
-
-	return ret;
-			
-
-}
 
 int main(){
 
-	string filename = "data/images/Test18_1.tif";
+	string filename = "data/images/Test4_1.tif";
 	Mat image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	if (!image.data){
 		cout << "ur image sux" << endl;
 		return -1;
 	}	
 
-	vector<Vec3f> circles = get_circles(image);
-	for( size_t i = 0; i < circles.size(); i++ )
+	vector<Rect> rectangles = get_objects(image);
+	for( size_t i = 0; i < rectangles.size(); i++ )
 	{
-   		Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-		int radius = cvRound(circles[i][2]);
+   		//Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+		//int radius = cvRound(circles[i][2]);
 		// circle center
-   		circle( image, center, 3, Scalar(0,255,0), -1, 8, 0 );
+   		//circle( image, center, 3, Scalar(0,255,0), -1, 8, 0 );
 
    		// circle outline
    		//circle( image, center, radius, Scalar(0,0,255), 3, 8, 0 );
  		
 		//rectangle outline
-		Rect rect = circle_to_square(center.x, center.y, radius);
-		rectangle(image, rect, Scalar(0,0,255), 1, 8, 0 );
+		//Rect rect = circle_to_square(center.x, center.y, radius);
+		rectangle(image, rectangles[i], Scalar(0,0,255), 1, 8, 0 );
 		
 	}
 

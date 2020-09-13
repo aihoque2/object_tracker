@@ -23,7 +23,7 @@ class dataCollector{
 						     set the filename with this setter func*/
 		
 		//our image processing gets run here
-		vector<Vec3f> detectCircles; //detect circles for our function
+		vector<Rect> detectObjects; //detect circles for our function
 
 		
 		
@@ -34,5 +34,4 @@ class dataCollector{
 	private:
 		string filename //this is important data. protecc it at all times
 		vector<Point2f> boundingBoxes;
-		vector<Vec3f> circles;
 };

@@ -79,13 +79,11 @@ int main(){
 	 
 	copy = image.clone();
 	
-	int r = 4;
+	//int r = 4;
+	//for( int i = 0; i < corners.size(); i++ ){ 
+	//circle( copy, corners[i], r, Scalar(255, 0, 0), -1, 8, 0 );
 
-	for( int i = 0; i < corners.size(); i++ ){ 
-	circle( copy, corners[i], r, Scalar(255, 0, 0), -1, 8, 0 );
-
-	
-	}
+	//}
 
 	namedWindow("Display Window", WINDOW_AUTOSIZE);
 	imshow("Display Window", copy);
