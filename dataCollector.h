@@ -7,6 +7,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imageproc.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/video.hpp>
 #include <process_images.h>
 
 
@@ -22,8 +24,8 @@ class dataCollector{
 						     default constructor, they can just
 						     set the filename with this setter func*/
 		
-		//our image processing gets run here
-		vector<Rect> detectObjects; //detect circles for our function
+		Rect circle_to_square(int x, int y, int r); //I use houghCircles() for object detection, and I create a bounding box
+		vector<Rect> detectObjects(Mat image); //detect our objects and return bounding boxes
 
 		
 		

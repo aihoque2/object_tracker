@@ -35,7 +35,21 @@ Mat processCircDivision(Mat image){
 	 /*take in a 1-channel grayscale image and
          * return a division of the processed image
          * that brings out the circular features
-         * used in detectCircles()*/
+	  * used in detectCircles()*/
+
+	        Mat smooth, div;
+
+        Mat rectKernel = getStructuringElement(MORPH_RECT, Size(5,5));
+        Mat circKernel = getStructuringElement(MORPH_ELLIPSE, Size(5,5));
+
+        morphologyEx(image, smooth, MORPH_DILATE, rectKernel);
+        medianBlur(smooth, smooth, 5);
+        morphologyEx(smooth, smooth, MORPH_DILATE, circKernel);
+
+        divide(image, smooth, div, 255.0);
+
+        return div;
+
 
 
 }

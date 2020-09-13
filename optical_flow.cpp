@@ -5,6 +5,8 @@
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/video.hpp>
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -66,28 +68,78 @@ vector<Point2f> get_corners(Mat image){ //1 channel image will do
 int main(){
 
 	string filename = "data/images/Test21_1.tif";
-	Mat div, copy;	
+	string vidFile = "data/videos/Test21.avi";
 
-	Mat image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-	if (!image.data){
-		cout << "ur image sux" << endl;
+	VideoCapture capture(vidFile);	
+	if (!capture.isOpened()){
+		cout << "ur video sux" << endl;
 		return -1;
 	}
+
+	// Create some random colors
+	vector<Scalar> colors;
+	RNG rng;
+	for(int i = 0; i < 100; i++)
+	{
+		int r = rng.uniform(0, 256);
+		int g = rng.uniform(0, 256);
+		int b = rng.uniform(0, 256);
+		colors.push_back(Scalar(r,g,b));
+	}
+
+
+	Mat firstFrame, oldGray;
+
+	capture >> firstFrame;
 	
+	cvtColor(firstFrame, oldGray, COLOR_BGR2GRAY);
 
-	vector<Point2f> corners = get_corners(image);
-	 
-	copy = image.clone();
+	vector<Point2f> corners = get_corners(oldGray);
+	vector<Point2f> p1;
 	
-	//int r = 4;
-	//for( int i = 0; i < corners.size(); i++ ){ 
-	//circle( copy, corners[i], r, Scalar(255, 0, 0), -1, 8, 0 );
+	
+	// Create a mask image for drawing purposes
+	Mat mask = Mat::zeros(firstFrame.size(), firstFrame.type());
 
-	//}
+	while (true){	
+		Mat frame, frameGray;
+		capture >> frame;
+		if (frame.empty()){
+			break;
+		}
+		cvtColor(frame, frameGray, COLOR_BGR2GRAY);
+		
+		//calculate optical flow
+		vector<uchar> status;
+		vector<float> err;
+		TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+		calcOpticalFlowPyrLK(oldGray, frameGray, corners, p1, status, err, Size(15,15), 2, criteria);
+		
+		vector<Point2f> good_new;
+		for (int i = 0; i < corners.size(); i++){
+			
+			//Select good points
+			if (status[i] == 1){
+				good_new.push_back(p1[i]);
+				//draw tracks
+				line(mask, p1[i], corners[i], colors[i], 2);
+				circle(frame, p1[i], 5, colors[i], -1);
+			}
 
-	namedWindow("Display Window", WINDOW_AUTOSIZE);
-	imshow("Display Window", copy);
-	waitKey(0);
+		}
+
+		Mat img;
+		add(frame, mask, img);
+
+		imshow("frame", img);
+
+		int keyboard = waitKey(30);
+		if (keyboard == 'q' || keyboard == 27){ break;}
+
+		oldGray = frameGray.clone();
+		corners = good_new;
+	}
+
 	return 0;
 
 

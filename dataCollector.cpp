@@ -1,44 +1,73 @@
 #include "dataCollector.h"
+#include "process_images.cpp"
 
 using namespace std;
 using namespace cv;
 
 
-Mat dataCollector::procesRectDivision(Mat image){
-	/*take in a 1-channel grayscale image and 
-	 * return the division of the processed vs 
-	 * original image
-	 *
-	 * input: Image that we are trying to process
-	 * output: a new processed image using the division() method */ 
 
-        Mat gray, smooth, dst;
+Rect dataCollector::circle_to_square(int x, int y, int r){ //fun fact: openCV has a Rect_ class for rectangles
+        /*create a rectangle from the given 
+        * circle ands its center points
+        * radius size for the square is 
+        * gonna be like 60 or 70 */
 
-        //cvtColor(image, gray, CV_BGR2GRAY);// gray in case of emergency
+        int cornerX = x - 50;
+        int cornerY = y - 50;
+        Point corner(cornerX, cornerY);
+        Size squareDim(100,100);
 
-        Mat kernel = getStructuringElement(MORPH_RECT, Size(7,7));
+        Rect ret(corner, squareDim);
 
-        morphologyEx(image, smooth, MORPH_DILATE, kernel); //bring out everything
-
-        divide(image, smooth, dst, 255.0);
-
-        return dst;
+        return ret;
 
 
 }
 
-Mat dataCollector::processCircDivision(Mat image){
-	/*take in a 1-channel grayscale image and
-	 * retunr a division of the processed image
-	 * that brings out the circular features
-	 * used in detectCircles()*/
 
-}
+vector<Rect> dataCollector::detectObjects(Mat image){
+        /*take grayscale image and return
+         * predicted bounding boxes in the valid area
+         * 
+         * output: a vector containing the circles
+         * */
 
-vector<Vec3f> dataCollector::detectCircles(Mat image){
+        vector<Vec3f> circles;
+        vector<Rect> boxes;
+
+        int boxRadius = 50; //parameter might need tuning
+
+
+        Mat div = process_division_circle(image);
+
+        //get our circles
+        HoughCircles(div, circles, CV_HOUGH_GRADIENT, 1, 150, 255, 45, 0, 60);
+
+        for (int i = 0; i < circles.size(); i++){
+                //check for any points out of bounds
+                if (circles[i][0] < 100 || circles[i][0] >900){
+                        circles.erase(circles.begin() + i);
+                }
+                else if (circles[i][1] < 100 || circles[i][1] >900){
+                        circles.erase(circles.begin() + i);
+                }
+
+                //normal case
+                else{
+                        Rect toPush = circle_to_square(cvRound(circles[i][0]), cvRound(circles[i][1]), boxRadius);
+                        boxes.push_back(toPush);
+
+                }
+
+        }
+
+        return boxes;
 	
 
+
+
 }
+
 
 
 void dataCollector::run(){	
