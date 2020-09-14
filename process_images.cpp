@@ -20,7 +20,7 @@ Mat processRectDivision(Mat image){
 
 	//cvtColor(image, gray, BGR2GRAY);// gray in case of emergency
 	
-	Mat kernel = getStructuringElement(MORPH_RECT, Size(7,7));
+	Mat kernel = getStructuringElement(MORPH_RECT, Size(5,5));
 	
 	morphologyEx(image, smooth, MORPH_DILATE, kernel); //bring out everything
 

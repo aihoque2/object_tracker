@@ -40,7 +40,7 @@ vector<Point2f> get_corners(Mat image){ //1 channel image will do
 	
 
 	vector<Point2f> corners; //our return
-	double qualityLevel = 0.1;
+	double qualityLevel = 0.01;
 	double minDistance = 10;
 	int blockSize = 3;
 	bool useHarrisDetector = false;

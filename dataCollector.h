@@ -20,20 +20,32 @@ class dataCollector{
 
 	public:
 		dataCollector(string filename);
-		void setFilename(string filename); /*in case someone declares the
-						     default constructor, they can just
-						     set the filename with this setter func*/
 		
-		Rect circle_to_square(int x, int y, int r); //I use houghCircles() for object detection, and I create a bounding box
+		
+		/*in case someone declares
+                 * default constructor, they
+                 * can set the member variables
+                 * with this func*/
+		void createCollector(const string filename); //the function that constructs our dataCollector object
+
+		vector<Point2f>getCorners(Mat image);
+	
+			
 		vector<Rect> detectObjects(Mat image); //detect our objects and return bounding boxes
 
-		
-		
+		void sortFn();
+		void sortBoundingBoxes(); //sort our bounding boxes after gathering enerything.
+	
+
+		Rect circle_to_square(int x, int y, int r); //I use houghCircles() for object detection, and I create a bounding box
+
+			
 
 		void run(); //this is where the tracking algorithm is run
 	
 	
 	private:
-		string filename //this is important data. protecc it at all times
-		vector<Point2f> boundingBoxes;
+		string filename; //this is important data. protecc it at all times
+		Vector<Point2f> corners;
+		vector<Rect> boundingBoxes;
 };

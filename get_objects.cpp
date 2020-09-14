@@ -2,6 +2,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
+#include <algorithm>
 #include <iostream>
 #include <stdio.h>
 
@@ -70,10 +71,10 @@ vector<Rect> get_objects(Mat image){
 
 	for (int i = 0; i < circles.size(); i++){ 
 		//check for any points out of bounds
-		if (circles[i][0] < 100 || circles[i][0] >900){
+		if (circles[i][0] < 100 || circles[i][0] > 900){
 			circles.erase(circles.begin() + i);
 		}
-		else if (circles[i][1] < 100 || circles[i][1] >900){
+		else if (circles[i][1] < 100 || circles[i][1] > 900){
 			circles.erase(circles.begin() + i);
 		}
 
@@ -90,6 +91,21 @@ vector<Rect> get_objects(Mat image){
 
 }
 
+vector<int> everyOtherEven(int n){
+	vector<int> ret;
+	for (int i = 2; i < n; i+= 4){
+		ret.push_back(i);
+	}
+	return ret;
+}
+
+
+bool compareRects(Rect leftRect, Rect rightRect){
+	
+	if (leftRect.y == rightRect.y){ return leftRect.x < rightRect.x;}
+	return (leftRect.y < rightRect.y);
+
+}
 
 
 int main(){
@@ -102,18 +118,23 @@ int main(){
 	}	
 
 	vector<Rect> rectangles = get_objects(image);
-	for( size_t i = 0; i < rectangles.size(); i++ )
+	sort(rectangles.begin(), rectangles.end(), compareRects);
+	vector<int> swap_indices = everyOtherEven(rectangles.size());
+	for( int i = 0; i < rectangles.size(); i++ )
 	{
-   		//Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-		//int radius = cvRound(circles[i][2]);
-		// circle center
-   		//circle( image, center, 3, Scalar(0,255,0), -1, 8, 0 );
+			
+			
+		//TODO THIS EDGE CASE FOR THE RECTANGLES
+		if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) {
+			cout << "swap attempt" << endl;
+			Rect temp = rectangles[i];
+			rectangles[i] = rectangles[i+1];
+			rectangles[i+1] = temp;
+		}
+		
 
-   		// circle outline
-   		//circle( image, center, radius, Scalar(0,0,255), 3, 8, 0 );
- 		
-		//rectangle outline
-		//Rect rect = circle_to_square(center.x, center.y, radius);
+		cout << "x: "<< rectangles[i].x << " y: " << rectangles[i].y << endl;
+
 		rectangle(image, rectangles[i], Scalar(0,0,255), 1, 8, 0 );
 		
 	}
