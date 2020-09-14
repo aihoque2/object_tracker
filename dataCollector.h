@@ -33,8 +33,10 @@ class dataCollector{
 			
 		vector<Rect> detectObjects(Mat image); //detect our objects and return bounding boxes
 
-		void sortFn();
-		void sortBoundingBoxes(); //sort our bounding boxes after gathering enerything.
+		bool compareRects(Rect leftRect, Rect rightRect); //our function to pass through std::sort()
+		vector<int> everyOtherEven(int n); //some helper function
+
+		void sortBoundingBoxes(); //sort our bounding boxes after gathering everything
 	
 
 		Rect circle_to_square(int x, int y, int r); //I use houghCircles() for object detection, and I create a bounding box
@@ -46,6 +48,6 @@ class dataCollector{
 	
 	private:
 		string filename; //this is important data. protecc it at all times
-		Vector<Point2f> corners;
+		Vector<Point2f> corners; //these points are our initial coordinates where the muscle well starts at. detect displacement by subracting these
 		vector<Rect> boundingBoxes;
 };

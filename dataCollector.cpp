@@ -23,7 +23,7 @@ void dataCollector::createCollector(const string filename){
 }
 
 
-vector<Point2f> getCorners(Mat image){
+vector<Point2f> dataCollector::getCorners(Mat image){
         
 	/* return an image that shows all the corners detected 
          * utilizes the goodFeaturesToTrack() function*/
@@ -115,14 +115,71 @@ vector<Rect> dataCollector::detectObjects(Mat image){
         }
 
         return boxes;
-	
 
+}
+
+vector<int> dataCollector::everyOtherEven(int n){
+        vector<int> ret;
+        for (int i = 2; i < n; i += 4){
+                ret.push_back(i);
+        }
+        return ret;
+}
+
+
+
+
+bool dataCollector::compareRects(Rect leftRect, Rect rightRect){
+	
+	if (leftRect.y == rightRect.y){ return leftRect.x < rightRect.x;}
+        return (leftRect.y < rightRect.y);
 
 
 }
 
 
+void dataCollector::sortBoundingBoxes(){
+	/*after we create our boundingBox 
+	 * vector, we sort it to follow 
+	 * the proper naming procedure
+	 * with the use of this function.
+	 */
+
+	sort(boundingBoxes.begin(), boundingBoxes.end(), compareRects);
+        vector<int> swap_indices = everyOtherEven(boundingBoxes.size());
+
+        for( int i = 0; i < this.boundingBoxes.size(); i++ )
+        {
+
+                if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) {
+                        cout << "swap attempt" << endl; //doing this swap to keep the integrity of the dataCollection
+                        Rect temp = this.boundingBoxes[i];
+                        this.boundingBoxes[i] = this.boundingBoxes[i+1];
+                        this.boundingBoxes[i+1] = temp;
+                }
+
+
+        }	
+}
 
 void dataCollector::run(){	
-	string myFile = dataCollector.filename
+	//TODO: this function
+	
+	videoCapture capture(this.filename);
+	
+	Mat firstImg, firstGray, firstDiv;
+	capture << firstImg;
+
+	cvtColor(firstImg, firstGray, COLOR_BGR2GRAY);
+	firstDiv = process_division(firstGray);
+
+	for (int i = 0; i < this.boundingBoxes.size(); i++){
+		//play through the video and capture for each rect. 
+		//this could maybe made faster with the use of OpenMP and parallel programming		
+
+	}	
+
+	
+
+
 }
