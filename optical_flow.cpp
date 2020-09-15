@@ -88,11 +88,12 @@ int main(){
 	}
 
 
-	Mat firstFrame, oldGray;
+	Mat firstFrame, oldGray, oldDiv;
 
 	capture >> firstFrame;
 	
 	cvtColor(firstFrame, oldGray, COLOR_BGR2GRAY);
+	oldDiv = process_division(oldGray);
 
 	vector<Point2f> corners = get_corners(oldGray);
 	vector<Point2f> p1;
@@ -102,18 +103,20 @@ int main(){
 	Mat mask = Mat::zeros(firstFrame.size(), firstFrame.type());
 
 	while (true){	
-		Mat frame, frameGray;
+		Mat frame, frameGray, frameDiv;
 		capture >> frame;
 		if (frame.empty()){
 			break;
 		}
 		cvtColor(frame, frameGray, COLOR_BGR2GRAY);
-		
+		frameDiv = process_division(frameGray);
+
+
 		//calculate optical flow
 		vector<uchar> status;
 		vector<float> err;
 		TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
-		calcOpticalFlowPyrLK(oldGray, frameGray, corners, p1, status, err, Size(15,15), 2, criteria);
+		calcOpticalFlowPyrLK(oldDiv, frameDiv, corners, p1, status, err, Size(15,15), 2, criteria);
 		
 		vector<Point2f> good_new;
 		for (int i = 0; i < corners.size(); i++){
@@ -136,8 +139,8 @@ int main(){
 		int keyboard = waitKey(30);
 		if (keyboard == 'q' || keyboard == 27){ break;}
 
-		oldGray = frameGray.clone();
-		corners = good_new;
+		oldDiv = frameDiv.clone();
+		corners = p1;
 	}
 
 	return 0;

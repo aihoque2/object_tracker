@@ -28,13 +28,14 @@ class dataCollector{
                  * with this func*/
 		void createCollector(const string filename); //the function that constructs our dataCollector object
 
-		vector<Point2f>getCorners(Mat image);
+		vector<Point2f>getCorners(Mat image); //get all the trackable corners in the image
+
+		vector<Point2f> getPointsWithinBox(Rect boundingBox); //get the subset of corners that are within the rectangle
 	
 			
 		vector<Rect> detectObjects(Mat image); //detect our objects and return bounding boxes
 
 		bool compareRects(Rect leftRect, Rect rightRect); //our function to pass through std::sort()
-		vector<int> everyOtherEven(int n); //some helper function
 
 		void sortBoundingBoxes(); //sort our bounding boxes after gathering everything
 	

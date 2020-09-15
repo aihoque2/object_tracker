@@ -71,13 +71,15 @@ vector<Rect> get_objects(Mat image){
 
 	for (int i = 0; i < circles.size(); i++){ 
 		//check for any points out of bounds
+		
 		if (circles[i][0] < 100 || circles[i][0] > 900){
 			circles.erase(circles.begin() + i);
 		}
 		else if (circles[i][1] < 100 || circles[i][1] > 900){
 			circles.erase(circles.begin() + i);
 		}
-
+		
+		
 		//normal case
 		else{
 			Rect toPush = circle_to_square(cvRound(circles[i][0]), cvRound(circles[i][1]), boxRadius);
@@ -110,7 +112,7 @@ bool compareRects(Rect leftRect, Rect rightRect){
 
 int main(){
 
-	string filename = "data/images/Test4_1.tif";
+	string filename = "data/images/Test21_1.tif";
 	Mat image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
 	if (!image.data){
 		cout << "ur image sux" << endl;
@@ -125,11 +127,14 @@ int main(){
 			
 			
 		//TODO THIS EDGE CASE FOR THE RECTANGLES
-		if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) {
-			cout << "swap attempt" << endl;
-			Rect temp = rectangles[i];
-			rectangles[i] = rectangles[i+1];
-			rectangles[i+1] = temp;
+		//if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) 
+		if(i % 2 == 0){
+			if (rectangles[i].x > rectangles[i+1].x){
+				cout << "swap attempt" << endl;
+				Rect temp = rectangles[i];
+				rectangles[i] = rectangles[i+1];
+				rectangles[i+1] = temp;
+			}
 		}
 		
 

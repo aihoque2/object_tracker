@@ -56,6 +56,23 @@ vector<Point2f> dataCollector::getCorners(Mat image){
 
 }
 
+vector<Point2f> dataCollector::getPointsWithinBox(Rect boundingBox){
+	/* get the subset of corners that are within the Rect
+	 * 
+	 * Input: the bounding box passed as a Rect
+	 * output: a vector containing the subset of points
+	*/
+
+	vector<Point2f> ret;
+	for (int i = 0; i < this.corners.size(); i++){
+
+		if boundingBox.contains(this.corners[i]) ret.push_back(this.corners[i]);
+	}
+
+	return ret;
+
+} 
+
 
 Rect dataCollector::circle_to_square(int x, int y, int r){ //fun fact: openCV has a Rect_ class for rectangles
         /*create a rectangle from the given 
@@ -118,14 +135,6 @@ vector<Rect> dataCollector::detectObjects(Mat image){
 
 }
 
-vector<int> dataCollector::everyOtherEven(int n){
-        vector<int> ret;
-        for (int i = 2; i < n; i += 4){
-                ret.push_back(i);
-        }
-        return ret;
-}
-
 
 
 
@@ -146,16 +155,17 @@ void dataCollector::sortBoundingBoxes(){
 	 */
 
 	sort(boundingBoxes.begin(), boundingBoxes.end(), compareRects);
-        vector<int> swap_indices = everyOtherEven(boundingBoxes.size());
 
         for( int i = 0; i < this.boundingBoxes.size(); i++ )
         {
 
-                if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) {
-                        cout << "swap attempt" << endl; //doing this swap to keep the integrity of the dataCollection
-                        Rect temp = this.boundingBoxes[i];
-                        this.boundingBoxes[i] = this.boundingBoxes[i+1];
-                        this.boundingBoxes[i+1] = temp;
+                if(i%2 == 0) {
+			if (rectangles[i].x > rectangles[i+1].x){
+				//doing this swap to follow the labeling required by my PhD I work under
+                        	Rect temp = this.boundingBoxes[i];
+                        	this.boundingBoxes[i] = this.boundingBoxes[i+1];
+                        	this.boundingBoxes[i+1] = temp;
+			}
                 }
 
 
@@ -166,17 +176,104 @@ void dataCollector::run(){
 	//TODO: this function
 	
 	videoCapture capture(this.filename);
-	
-	Mat firstImg, firstGray, firstDiv;
+	if (!capture.isOpened()){
+		cout << "ur video sux" << endl;
+	}
+
+
+	Mat firstImg, oldGray, oldDiv; //oldDiv to be used in video loops
 	capture << firstImg;
 
-	cvtColor(firstImg, firstGray, COLOR_BGR2GRAY);
-	firstDiv = process_division(firstGray);
+	cvtColor(firstImg, oldGray, COLOR_BGR2GRAY);
+
+	vector<Point2f> p1; //holder vec to get the next neighbors in optical flow calculation
+
+	bool timeAdded = False; //flag to tell us if we added the time column to our recording
 
 	for (int i = 0; i < this.boundingBoxes.size(); i++){
-		//play through the video and capture for each rect. 
-		//this could maybe made faster with the use of OpenMP and parallel programming		
+		//for each rect, play through the video and capture
+		//this could maybe made faster with the use of OpenMP and parallel programming
+		//maybe use threads aswell
+		
+		//subsetCorners is passed through calcOpticalFlowPyrLK(). firstCorners holds x_0 and y_0 to record our displacement
+		vector<Point2f> subsetCorners, initialCorners = getPointsWithinBox(this.boundingBoxes[i]);
+		mat Mask = mat::zeroes(firstImg.size(), firstImg.type()); //we want multiple colors when presenting the mask, so we use the firstImg
 
+		//vectors to hold the dataframe values
+		vector<double> timeVec; //record timestamp
+		vector<double> avgDisplacementVec; //average displacement at the timestamp for each square
+
+		while(true){
+			vector<int> deltaX; //the change in x for each point at index 'i' of subsetCorners
+
+
+			Mat frame, frameGray, frameDiv;
+			capture >> frame;
+			if(frame.empty()){
+				break;
+			}
+			cvtColor(frame, frameGray);
+			oldDiv = process_division(oldGray);
+			frameDiv = process_division(frameGray);
+
+			//calculate optical flow
+			vector<uchar> status;
+			vector<float> err;
+
+			TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+			calcOpticalFlowPyrLK(oldDiv, frameDiv, subsetCorners, p1, status, err, Size(15,15), 2, criteria);
+			
+			bool toRecord = False; //this flag tells us when to record data
+
+			timestamp = capture.get(CAP_PROP_POS_MSEC);//get the time
+
+
+			//go through corners to draw mask on and record data
+			vector<Point2f> good_new;
+			for (int i = 0; i < subsetCorners.size(); i++){
+				if (status[i] == 1){
+					good_new.push_back(p1[i]);
+					line(mask, subsetCorners[i], colors[i], 2);
+					circle(frame, p1[i], 5, colors[i], -1);	
+				}	
+
+				if ((timestamp % 250) == 0){
+					toRecord = true
+					int dx = p1[i].x - initialCorners[i].x;
+					deltaX.push_back(dx); //put all corners' displacements in this vector
+				}
+				
+			}
+
+			if (toRecord){
+				//recording data
+				double avgDisplacement = ((double)accumulate(deltaX)/(double)deltaX.size());
+				avgDisplacementVec.push_back(avgDisplacement);
+				timeVec.push_back(timestamp)
+
+				//resetting variables
+				deltaX.clear(); 
+				toRecord = false;
+			}	
+
+			Mat img;
+			add(frame, mask, img);
+			rectangle(img, boundingBoxes[i], Scalar(0,0,255), 1, 8, 0);
+
+			imshow("frame", img);
+
+			int keyboard = waitkey(30);
+			if (keyboard == 'q' || keyboard ==27){break;}
+
+			oldGray = frameGray.clone();
+		}
+
+		//TODO: record the data here to dataFrame()
+		if (!timeAdded){
+			myDf.addCol("time (ms)", time);
+		}
+
+		myDF.add("displacement" + string(i), avgDisplacementVec);
 	}	
 
 	
