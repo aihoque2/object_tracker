@@ -1,5 +1,17 @@
+/*dataCollector.cpp */
+
+#include <opencv2/highgui.hpp>                                                                        
+#include <opencv2/imgproc.hpp>                                                                        
+#include <opencv2/videoio.hpp>                                                                        
+#include <opencv2/video.hpp>                                                                          
+#include <iostream>
+#include <stdlib.h>                                                                                   
+#include <stdio.h>                                                                                    
+#include <vector>
+
 #include "dataCollector.h"
 #include "process_images.cpp"
+#include "dataframe.h"
 
 using namespace std;
 using namespace cv;
@@ -180,6 +192,8 @@ void dataCollector::run(){
 		cout << "ur video sux" << endl;
 	}
 
+	Dataframe myDF;
+
 
 	Mat firstImg, oldGray, oldDiv; //oldDiv to be used in video loops
 	capture << firstImg;
@@ -189,6 +203,7 @@ void dataCollector::run(){
 	vector<Point2f> p1; //holder vec to get the next neighbors in optical flow calculation
 
 	bool timeAdded = False; //flag to tell us if we added the time column to our recording
+
 
 	for (int i = 0; i < this.boundingBoxes.size(); i++){
 		//for each rect, play through the video and capture
@@ -270,13 +285,17 @@ void dataCollector::run(){
 
 		//TODO: record the data here to dataFrame()
 		if (!timeAdded){
-			myDf.addCol("time (ms)", time);
+			myDf.addColumn("time (ms)", time);
+			timeAdded = true;
 		}
 
-		myDF.add("displacement" + string(i), avgDisplacementVec);
+		myDF.addColumn("displacement_" + to_string(i), avgDisplacementVec);
 	}	
-	//TODO: export the dataframe as a .csv file here
-	
 
+	//TODO: export the dataframe as a .csv file here
+	int idx =  this.filename.find(".");
+	string resultsFile = this.filename.substr(0, idx);
+
+	myDF.writeToFile("results/" + filename + ".csv");
 
 }

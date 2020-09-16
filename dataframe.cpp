@@ -18,6 +18,7 @@ Dataframe::Dataframe(string filename){
 		
 }
 
+
 void Dataframe::readFile(string filename){
 	
 	ifstream myFile(filename);
@@ -52,6 +53,7 @@ void Dataframe::readFile(string filename){
 }
 
 
+
 void Dataframe::writeToFile(string filename){
 	/*create a csv file representing our dataframe
 	 * INPUT: name of the file
@@ -70,9 +72,9 @@ void Dataframe::writeToFile(string filename){
 	myFile << "\n";
 
 	//send data to the stream
-	for (int i = 0; i < _data.at(0).second.size(); i++){ //traverse the row
+	for (int i = 0; i < _data.at(0).second.size(); i++){ //traverse the columns
 		
-		for (int j = 0; j < _data.size(); j++){ //traverse the different columns
+		for (int j = 0; j < _data.size(); j++){ //traverse the different rows
 			
 			myFile << _data.at(j).second.at(i);
 			if(j != _data.size() - 1) myFile << ",";
