@@ -275,7 +275,7 @@ void dataCollector::run(){
 
 		myDF.add("displacement" + string(i), avgDisplacementVec);
 	}	
-
+	//TODO: export the dataframe as a .csv file here
 	
 
 
