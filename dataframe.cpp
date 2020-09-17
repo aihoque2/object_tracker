@@ -14,7 +14,7 @@ using namespace std;
 
 Dataframe::Dataframe(string filename){
 
-	read_file(filename);
+	readFile(filename);
 		
 }
 
@@ -65,7 +65,7 @@ void Dataframe::writeToFile(string filename){
 	//add the column names
 	for (int i = 0; i < _data.size(); i++){
 		myFile << _data.at(i).first;
-		if (j != _data.size() -1) myFile << ",";
+		if (i != _data.size() -1) myFile << ",";
 	
 	}	
 

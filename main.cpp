@@ -14,7 +14,7 @@ int main(){
 	
 	dataCollector myCollector(filename);
 
-	myCollector.run()
+	myCollector.run();
 
 	return 0;
 

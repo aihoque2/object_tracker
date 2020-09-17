@@ -10,11 +10,52 @@
 #include <vector>
 
 #include "dataCollector.h"
-#include "process_images.cpp"
 #include "dataframe.h"
 
 using namespace std;
 using namespace cv;
+
+/*use of the private heleprs*/
+Mat dataCollector::processRectDivision(Mat image){
+        
+	
+	//note: this takes in 1-channel images for input
+        Mat gray, smooth, dst;
+
+        //cvtColor(image, gray, BGR2GRAY);// gray in case of emergency
+
+        Mat kernel = getStructuringElement(MORPH_RECT, Size(5,5));
+
+        morphologyEx(image, smooth, MORPH_DILATE, kernel); //bring out everything
+
+        divide(image, smooth, dst, 255.0);
+
+        return dst;
+
+
+}
+
+
+Mat dataCollector::processCircDivision(Mat image){
+
+                Mat smooth, div;
+
+                Mat rectKernel = getStructuringElement(MORPH_RECT, Size(5,5));
+                Mat circKernel = getStructuringElement(MORPH_ELLIPSE, Size(5,5));
+
+                morphologyEx(image, smooth, MORPH_DILATE, rectKernel);
+                medianBlur(smooth, smooth, 5);
+                morphologyEx(smooth, smooth, MORPH_DILATE, circKernel);
+
+                divide(image, smooth, div, 255.0);
+
+                return div;
+
+
+}
+
+
+/*now for the public functions*/
 
 
 dataCollector::dataCollector(const string filename){
@@ -22,7 +63,7 @@ dataCollector::dataCollector(const string filename){
 }
 
 void dataCollector::createCollector(const string filename){
-	videoCapture capture(filename);	
+	VideoCapture capture(filename);	
 	Mat img, imgGray, imgDiv;   
 	capture>>img;
 
@@ -212,7 +253,7 @@ void dataCollector::run(){
 		
 		//subsetCorners is passed through calcOpticalFlowPyrLK(). firstCorners holds x_0 and y_0 to record our displacement
 		vector<Point2f> subsetCorners, initialCorners = getPointsWithinBox(this.boundingBoxes[i]);
-		mat Mask = mat::zeroes(firstImg.size(), firstImg.type()); //we want multiple colors when presenting the mask, so we use the firstImg
+		mat mask = mat::zeroes(firstImg.size(), firstImg.type()); //we want multiple colors when presenting the mask, so we use the firstImg
 
 		//vectors to hold the dataframe values
 		vector<double> timeVec; //record timestamp
@@ -253,7 +294,7 @@ void dataCollector::run(){
 				}	
 
 				if ((timestamp % 250) == 0){
-					toRecord = true
+					toRecord = true;
 					int dx = p1[i].x - initialCorners[i].x;
 					deltaX.push_back(dx); //put all corners' displacements in this vector
 				}

@@ -5,11 +5,10 @@
  * video datasets */
 
 #include <opencv2/highgui.hpp>
-#include <opencv2/imageproc.hpp>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
-#include <process_images.h>
 
 
 using namespace cv;
@@ -48,7 +47,12 @@ class dataCollector{
 	
 	
 	private:
+		//member variables
 		string filename; //this is important data. protecc it at all times
-		Vector<Point2f> corners; //these points are our initial coordinates where the muscle well starts at. detect displacement by subracting these
+		vector<Point2f> corners; //these points are our initial coordinates where the muscle well starts at. detect displacement by subracting these
 		vector<Rect> boundingBoxes;
+
+		//member functions for image processing
+		Mat processRectDivision(Mat image);
+		Mat processCircDivision(Mat image);
 };
