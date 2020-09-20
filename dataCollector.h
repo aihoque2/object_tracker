@@ -34,7 +34,7 @@ class dataCollector{
 			
 		vector<Rect> detectObjects(Mat image); //detect our objects and return bounding boxes
 
-		bool compareRects(Rect leftRect, Rect rightRect); //our function to pass through std::sort()
+		//bool compareRects(Rect leftRect, Rect rightRect); //our function to pass through std::sort()
 
 		void sortBoundingBoxes(); //sort our bounding boxes after gathering everything
 	

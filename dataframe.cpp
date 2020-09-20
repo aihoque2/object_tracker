@@ -12,6 +12,13 @@
 
 using namespace std;
 
+
+Dataframe::Dataframe(){
+	vector<pair<string, vector<double>>> myData;
+	_data = myData;	
+
+}
+
 Dataframe::Dataframe(string filename){
 
 	readFile(filename);
@@ -30,10 +37,10 @@ void Dataframe::readFile(string filename){
 	//initialize the header of each column in the dataframe
 	vector<string> colNames = {"seconds", "latitude", "longitude", "altitude"};
 	for (int i =0; i < colNames.size(); i++){
-		_data.push_back({colNames[i], vector<long double>{}});
+		_data.push_back({colNames[i], vector<double>{}});
 	}
 
-	long double val;
+	double val;
 	while(getline(myFile, line)){
 		std::stringstream ss(line);
 
@@ -88,7 +95,7 @@ void Dataframe::writeToFile(string filename){
 }
 
 
-void Dataframe::addColumn(pair<string, vector<long double>> column){
+void Dataframe::addColumn(pair<string, vector<double>> column){
 	/*insert the given column into _data
 	 * input: the column in form of std::pair
 	 * the pair contains the column name (string) and 
@@ -99,13 +106,13 @@ void Dataframe::addColumn(pair<string, vector<long double>> column){
 
 }
 
-vector<pair<string, vector<long double>>> Dataframe::getData(){
+vector<pair<string, vector<double>>> Dataframe::getData(){
 	return _data;
 }
 
 
 	
-vector<long double> Dataframe::getTime(){
+vector<double> Dataframe::getTime(){
 	return _data[0].second;
 }
 
