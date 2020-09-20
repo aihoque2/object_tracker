@@ -267,7 +267,7 @@ void dataCollector::run(){
 		Mat mask = Mat::zeros(firstImg.size(), firstImg.type()); //we want multiple colors when presenting the mask, so we use the firstImg
 
 		//vectors to hold the dataframe values
-		vector<long double> timeVec; //record timestamp
+		vector<double> timeVec; //record timestamp
 		vector<double> avgDisplacementVec; //average displacement at the timestamp for each square
 
 		while(true){
