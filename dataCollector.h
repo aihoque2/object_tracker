@@ -9,6 +9,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
+#include <string>
 
 
 using namespace cv;
@@ -25,7 +26,7 @@ class dataCollector{
                  * default constructor, they
                  * can set the member variables
                  * with this func*/
-		void createCollector(const string filename); //the function that constructs our dataCollector object
+		void createCollectorconst (string filename); //the function that constructs our dataCollector object
 
 		vector<Point2f>getCorners(Mat image); //get all the trackable corners in the image
 
@@ -55,4 +56,6 @@ class dataCollector{
 		//member functions for image processing
 		Mat processRectDivision(Mat image);
 		Mat processCircDivision(Mat image);
+
+		double get_mean(vector<double> vec);
 };

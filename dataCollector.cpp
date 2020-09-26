@@ -225,6 +225,24 @@ void dataCollector::sortBoundingBoxes(){
         }	
 }
 
+
+/*helper function to get average of values in vector*/
+double get_mean(vector<double> vec){
+	double sum = 0.0;
+	int n = vec.size();
+
+	for (int i = 0; i < n; i++){
+		//TODO
+		sum += vec[i];
+
+	}
+
+	double ret = sum/n;
+	return ret;
+
+
+}
+
 void dataCollector::run(){	
 	//TODO: this function
 	
@@ -271,7 +289,7 @@ void dataCollector::run(){
 		vector<double> avgDisplacementVec; //average displacement at the timestamp for each square
 
 		while(true){
-			vector<int> deltaX; //the change in x for each point at index 'i' of subsetCorners
+			vector<double> deltaX; //the change in x for each point at index 'i' of subsetCorners
 
 
 			Mat frame, frameGray, frameDiv;
@@ -300,13 +318,13 @@ void dataCollector::run(){
 			for (int i = 0; i < subsetCorners.size(); i++){
 				if (status[i] == 1){
 					good_new.push_back(p1[i]);
-					line(mask, subsetCorners[i], colors[i], 2);
+					line(mask, subsetCorners[i], p1[i], colors[i], 2);
 					circle(frame, p1[i], 5, colors[i], -1);	
 				}	
 
 				if (((int)timestamp % 250) == 0){
 					toRecord = true;
-					int dx = p1[i].x - initialCorners[i].x;
+					double dx = (double)(p1[i].x - initialCorners[i].x);
 					deltaX.push_back(dx); //put all corners' displacements in this vector
 				}
 				
@@ -314,7 +332,7 @@ void dataCollector::run(){
 
 			if (toRecord){
 				//recording data
-				double avgDisplacement = ((double)accumulate(deltaX.begin(), deltaX.end(), 0)/(double)deltaX.size());
+				double avgDisplacement = get_mean(deltaX);
 				avgDisplacementVec.push_back(avgDisplacement);
 				timeVec.push_back(timestamp);
 
