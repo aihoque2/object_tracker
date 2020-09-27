@@ -1,10 +1,3 @@
- #include <iostream>
-#include <vector>
-#include <fstream>
-#include <utility>
-#include <sstream>
-#include <stdexcept>
-#include <math.h>
 #include "dataframe.h"
 
 #define PI 3.14159265

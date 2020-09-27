@@ -1,16 +1,6 @@
 /*dataCollector.cpp */
 
-#include <opencv2/highgui.hpp>                                                                        
-#include <opencv2/imgproc.hpp>                                                                        
-#include <opencv2/videoio.hpp>                                                                        
-#include <opencv2/video.hpp>                                                                          
-#include <iostream>
-#include <stdlib.h>                                                                                   
-#include <stdio.h>                                                                                    
-#include <vector>
-
 #include "dataCollector.h"
-#include "dataframe.h"
 
 using namespace std;
 using namespace cv;
@@ -19,8 +9,8 @@ using namespace cv;
 Mat dataCollector::processRectDivision(Mat image){
         
 	
-	//note: this takes in 1-channel images for input
-        Mat gray, smooth, dst;
+	//note: this function takes in a 1-channel image
+        Mat smooth, dst;
 
         //cvtColor(image, gray, BGR2GRAY);// gray in case of emergency
 
@@ -58,15 +48,24 @@ Mat dataCollector::processCircDivision(Mat image){
 /*now for the public functions*/
 
 
-dataCollector::dataCollector(const string filename){
+
+/*our constructor*/
+dataCollector::dataCollector(string filename){
 	createCollector(filename);
 }
 
+
+/*constructor helper*/
 void dataCollector::createCollector(string filename){
 	VideoCapture capture(filename);	
+	if (!capture.isOpened()){
+		cout << "unable to open video file in constructor" << endl;;
+		return;
+	}
+	
 	Mat img, imgGray, imgDiv;   
 	capture >> img;
-
+	
 	cvtColor(img, imgGray, COLOR_BGR2GRAY); //convert to grayscale to process the image
 	
 	filename = this->filename;
@@ -227,7 +226,7 @@ void dataCollector::sortBoundingBoxes(){
 
 
 /*helper function to get average of values in vector*/
-double get_mean(vector<double> vec){
+double dataCollector::get_mean(vector<double> vec){
 	double sum = 0.0;
 	int n = vec.size();
 
@@ -237,16 +236,16 @@ double get_mean(vector<double> vec){
 
 	}
 
-	double ret = sum/n;
+	double ret = sum/(double)n;
 	return ret;
 
 
 }
 
-void dataCollector::run(){	
+void dataCollector::run(string myFileName){	
 	//TODO: this function
 	
-	VideoCapture capture(filename);
+	VideoCapture capture(myFileName);
 	if (!capture.isOpened()){
 		cout << "ur video sux" << endl;
 	}
@@ -256,7 +255,8 @@ void dataCollector::run(){
 
 	Mat firstImg, oldGray, oldDiv; //oldDiv to be used in video loops
 	capture >> firstImg;
-
+	
+	cout <<"turning oldGray" << endl;
 	cvtColor(firstImg, oldGray, COLOR_BGR2GRAY);
 
 	vector<Point2f> p1; //holder vec to get the next neighbors in optical flow calculation

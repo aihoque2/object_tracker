@@ -1,19 +1,20 @@
 CC = g++
 CFLAGS = -g -Wall
-SRCS = main.cpp dataframe.h dataCollector.h
-PROG = collect
 
 OPENCV = `pkg-config opencv --cflags --libs`
 LIBS = $(OPENCV)
 
-$(PROG):$(SRCS)
-	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) $(LIBS)
 
+collect: main.o dataCollector.o dataframe.o
+	g++ -g -o collect main.o dataCollector.o dataframe.o $(LIBS)
 
+main.o: main.cpp dataCollector.h
+	g++ -g -c main.cpp dataCollector.h $(LIBS)
 
+dataCollector.o: dataCollector.cpp dataCollector.h dataframe.h
+	g++ -g -c dataCollector.cpp dataCollector.h dataframe.h $(LIBS)
 
-#collect: main.cpp dataCollector.cpp dataframe.cpp
-#	g++ -o collect main.cpp dataCollector.cpp dataframe.cpp `pkginfo openCV` -I.
-
+dataframe.o: dataframe.cpp dataframe.h
+	g++ -g -c dataframe.cpp dataframe.h 
 
 

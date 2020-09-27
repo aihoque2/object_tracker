@@ -3,7 +3,6 @@
  * this is the .h for our detector pipeline that
  * will collect the displacement data in the
  * video datasets */
-
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -11,6 +10,12 @@
 #include <opencv2/video.hpp>
 #include <string>
 
+#include <iostream> 
+#include <stdlib.h>
+#include <stdio.h> 
+#include <vector>
+
+#include "dataframe.h"
 
 using namespace cv;
 using namespace std;
@@ -26,7 +31,7 @@ class dataCollector{
                  * default constructor, they
                  * can set the member variables
                  * with this func*/
-		void createCollectorconst (string filename); //the function that constructs our dataCollector object
+		void createCollector(string filename); //the function that constructs our dataCollector object
 
 		vector<Point2f>getCorners(Mat image); //get all the trackable corners in the image
 
@@ -44,7 +49,7 @@ class dataCollector{
 
 			
 
-		void run(); //this is where the tracking algorithm is run
+		void run(string myFileName); //this is where the tracking algorithm is run
 	
 	
 	private:

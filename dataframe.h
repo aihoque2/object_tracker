@@ -1,5 +1,13 @@
+/*dataframe.h
+ */
+
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <utility>
+#include <sstream>
+#include <stdexcept>
+#include <math.h>
 #include <sstream>
 
 using namespace std;
