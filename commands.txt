@@ -1,0 +1,10 @@
+to run this project:
+
+make
+./collect <video filename goes here> <output csv name goes here>
+
+ex: ./collect data/videos/Test21.avi results/Test21_results.csv
+
+
+
+

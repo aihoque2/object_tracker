@@ -235,7 +235,7 @@ double dataCollector::get_mean(vector<double> vec){
 
 	for (int i = 0; i < n; i++){
 		//TODO
-		sum += vec[i];
+		sum += abs(vec[i]);
 
 	}
 
@@ -275,7 +275,7 @@ void dataCollector::run(string myFilename){
 	bool timeAdded = false; //flag to tell us if we added the time column to our recording
 
 
-	for (int i = 0; i < 1/* boundingBoxes.size()*/; i++){
+	for (int i = 0; i < boundingBoxes.size(); i++){
 		//for each rect, play through the video and capture
 		//this could maybe made faster with the use of OpenMP and parallel programming
 		//maybe use threads aswell

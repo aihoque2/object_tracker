@@ -8,13 +8,21 @@
 using namespace std;
 using namespace cv;
 
-int main(){
+int main(int argc, char** argv){
 
-	string filename = "data/videos/Test21.avi";
+	string filename = argv[1];
+	string output_name = argv[2];
 	
+
+	if (argc != 3){
+		cout << "ERROR: no arguments given" << endl;
+		cout << "to run collect, run ./collect <video filename for tracking> <dest/filename for csv>" << endl;
+		return 0;
+	}	
+
 	dataCollector myCollector(filename);
 	myCollector.run(filename);
-	myCollector.export_csv("results/yeet.csv");
+	myCollector.export_csv(output_name);
 	return 0;
 
 }
