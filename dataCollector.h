@@ -49,8 +49,9 @@ class dataCollector{
 
 			
 
-		void run(string myFileName); //this is where the tracking algorithm is run
-	
+		void run(string myFilename); //this is where the tracking algorithm is run
+		
+		void export_csv(string outFilename);	
 	
 	private:
 		//member variables
@@ -61,6 +62,7 @@ class dataCollector{
 		//member functions for image processing
 		Mat processRectDivision(Mat image);
 		Mat processCircDivision(Mat image);
+		Dataframe myDF;
 
 		double get_mean(vector<double> vec);
 };

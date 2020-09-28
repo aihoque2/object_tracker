@@ -12,12 +12,9 @@ int main(){
 
 	string filename = "data/videos/Test21.avi";
 	
-	cout << "creating collector " << endl;
 	dataCollector myCollector(filename);
-	cout <<"the collector has been constructed" << endl;
-
 	myCollector.run(filename);
-
+	myCollector.export_csv("results/yeet.csv");
 	return 0;
 
 }

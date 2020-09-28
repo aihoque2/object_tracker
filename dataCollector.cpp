@@ -7,8 +7,8 @@ using namespace cv;
 
 /*use of the private heleprs*/
 Mat dataCollector::processRectDivision(Mat image){
-        
-	
+
+
 	//note: this function takes in a 1-channel image
         Mat smooth, dst;
 
@@ -57,27 +57,28 @@ dataCollector::dataCollector(string filename){
 
 /*constructor helper*/
 void dataCollector::createCollector(string filename){
-	VideoCapture capture(filename);	
+	VideoCapture capture(filename);
 	if (!capture.isOpened()){
 		cout << "unable to open video file in constructor" << endl;;
 		return;
 	}
-	
-	Mat img, imgGray, imgDiv;   
+
+	Mat img, imgGray, imgDiv;
 	capture >> img;
-	
+
 	cvtColor(img, imgGray, COLOR_BGR2GRAY); //convert to grayscale to process the image
-	
+
 	filename = this->filename;
 	boundingBoxes = detectObjects(imgGray);
+	sortBoundingBoxes();
 	corners = getCorners(imgGray);
 
 }
 
 
 vector<Point2f> dataCollector::getCorners(Mat image){
-        
-	/* return an image that shows all the corners detected 
+
+	/* return an image that shows all the corners detected
          * utilizes the goodFeaturesToTrack() function*/
 
         //shi-tomasi parameters
@@ -103,14 +104,14 @@ vector<Point2f> dataCollector::getCorners(Mat image){
                useHarrisDetector,
                k);
 
-        return corners;	
-	
+        return corners;
+
 
 }
 
 vector<Point2f> dataCollector::getPointsWithinBox(Rect boundingBox){
 	/* get the subset of corners that are within the Rect
-	 * 
+	 *
 	 * Input: the bounding box passed as a Rect
 	 * output: a vector containing the subset of points
 	*/
@@ -118,18 +119,20 @@ vector<Point2f> dataCollector::getPointsWithinBox(Rect boundingBox){
 	vector<Point2f> ret;
 	for (int i = 0; i < corners.size(); i++){
 
-		if (boundingBox.contains(corners[i])) ret.push_back(corners[i]);
+		if (boundingBox.contains(corners[i])){
+			ret.push_back(corners[i]);
+		}
 	}
 
 	return ret;
 
-} 
+}
 
 
 Rect dataCollector::circle_to_square(int x, int y, int r){ //fun fact: openCV has a Rect_ class for rectangles
-        /*create a rectangle from the given 
+        /*create a rectangle from the given
         * circle ands its center points
-        * radius size for the square is 
+        * radius size for the square is
         * gonna be like 60 or 70 */
 
         int cornerX = x - 50;
@@ -191,7 +194,7 @@ vector<Rect> dataCollector::detectObjects(Mat image){
 
 
 bool compareRects(Rect leftRect, Rect rightRect){
-	
+
 	if (leftRect.y == rightRect.y){ return leftRect.x < rightRect.x;}
         return (leftRect.y < rightRect.y);
 
@@ -200,8 +203,8 @@ bool compareRects(Rect leftRect, Rect rightRect){
 
 
 void dataCollector::sortBoundingBoxes(){
-	/*after we create our boundingBox 
-	 * vector, we sort it to follow 
+	/*after we create our boundingBox
+	 * vector, we sort it to follow
 	 * the proper naming procedure
 	 * with the use of this function.
 	 */
@@ -221,7 +224,7 @@ void dataCollector::sortBoundingBoxes(){
                 }
 
 
-        }	
+        }
 }
 
 
@@ -242,47 +245,51 @@ double dataCollector::get_mean(vector<double> vec){
 
 }
 
-void dataCollector::run(string myFileName){	
+void dataCollector::run(string myFilename){
 	//TODO: this function
-	
-	VideoCapture capture(myFileName);
+
+	VideoCapture capture(myFilename);
 	if (!capture.isOpened()){
 		cout << "ur video sux" << endl;
 	}
 
-	Dataframe myDF;
-
 
 	Mat firstImg, oldGray, oldDiv; //oldDiv to be used in video loops
 	capture >> firstImg;
-	
+
 	cout <<"turning oldGray" << endl;
 	cvtColor(firstImg, oldGray, COLOR_BGR2GRAY);
 
-	vector<Point2f> p1; //holder vec to get the next neighbors in optical flow calculation
 
-        // Create some random colors                                                                  
-        vector<Scalar> colors;                                                                        
+        // Create some random colors
+        vector<Scalar> colors;
         RNG rng;
-        for(int i = 0; i < 100; i++)                                                                  
-        {       
-                int r = rng.uniform(0, 256);                                                          
-                int g = rng.uniform(0, 256);                                                          
+        for(int i = 0; i < 100; i++)
+        {
+                int r = rng.uniform(0, 256);
+                int g = rng.uniform(0, 256);
                 int b = rng.uniform(0, 256);
-                colors.push_back(Scalar(r,g,b));                                                      
-        }   
+                colors.push_back(Scalar(r,g,b));
+        }
 
 	bool timeAdded = false; //flag to tell us if we added the time column to our recording
 
 
-	for (int i = 0; i < boundingBoxes.size(); i++){
+	for (int i = 0; i < 1/* boundingBoxes.size()*/; i++){
 		//for each rect, play through the video and capture
 		//this could maybe made faster with the use of OpenMP and parallel programming
 		//maybe use threads aswell
-		
+
+		VideoCapture capture(myFilename);
+
 		//subsetCorners is passed through calcOpticalFlowPyrLK(). firstCorners holds x_0 and y_0 to record our displacement
-		vector<Point2f> subsetCorners, initialCorners = getPointsWithinBox(boundingBoxes[i]);
+		vector<Point2f> initialCorners = getPointsWithinBox(boundingBoxes[i]);
+		vector<Point2f> subsetCorners = getPointsWithinBox(boundingBoxes[i]);
+
+
 		Mat mask = Mat::zeros(firstImg.size(), firstImg.type()); //we want multiple colors when presenting the mask, so we use the firstImg
+
+		vector<Point2f> p1; //holder vec to get the next neighbors in optical flow calculation
 
 		//vectors to hold the dataframe values
 		vector<double> timeVec; //record timestamp
@@ -307,11 +314,11 @@ void dataCollector::run(string myFileName){
 
 			TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
 			calcOpticalFlowPyrLK(oldDiv, frameDiv, subsetCorners, p1, status, err, Size(15,15), 2, criteria);
-			
+
 			bool toRecord = false; //this flag tells us when to record data
 
-			double timestamp = capture.get(CAP_PROP_POS_MSEC);//get the time
 
+			int timestamp = capture.get(CAP_PROP_POS_MSEC);//get the time
 
 			//go through corners to draw mask on and record data
 			vector<Point2f> good_new;
@@ -319,15 +326,15 @@ void dataCollector::run(string myFileName){
 				if (status[i] == 1){
 					good_new.push_back(p1[i]);
 					line(mask, subsetCorners[i], p1[i], colors[i], 2);
-					circle(frame, p1[i], 5, colors[i], -1);	
-				}	
+					circle(frame, p1[i], 5, colors[i], -1);
+				}
 
-				if (((int)timestamp % 250) == 0){
+				if ((timestamp % 250) == 0){
 					toRecord = true;
 					double dx = (double)(p1[i].x - initialCorners[i].x);
 					deltaX.push_back(dx); //put all corners' displacements in this vector
 				}
-				
+
 			}
 
 			if (toRecord){
@@ -336,11 +343,10 @@ void dataCollector::run(string myFileName){
 				avgDisplacementVec.push_back(avgDisplacement);
 				timeVec.push_back(timestamp);
 
-
 				//resetting variables
-				deltaX.clear(); 
+				deltaX.clear();
 				toRecord = false;
-			}	
+			}
 
 			Mat img;
 			add(frame, mask, img);
@@ -352,24 +358,26 @@ void dataCollector::run(string myFileName){
 			if (keyboard == 'q' || keyboard ==27){break;}
 
 			oldGray = frameGray.clone();
-		}
+		} //while loop for video ends here
 
 		//TODO: record the data here to dataFrame()
 		if (!timeAdded){
+      cout << "reached the time column condition" << endl;
 			string timeString = "time (ms)";
 			pair<string, vector<double>> timeCol(timeString, timeVec);
 			myDF.addColumn(timeCol);
 			timeAdded = true;
 		}
-		
-		pair<string, vector<double>> column("displacement_" + to_string(i), avgDisplacementVec);
+
+		pair<string, vector<double>> column("displacement_" + to_string(i+1), avgDisplacementVec);
 		myDF.addColumn(column);
-	}	
-
-	//TODO: export the dataframe as a .csv file here
-	int idx =  filename.find(".");
-	string resultsFile = filename.substr(0, idx);
-
-	myDF.writeToFile("results/" + filename + ".csv");
+	}
 
 }
+
+
+void dataCollector::export_csv(string outFilename){
+	myDF.writeToFile(outFilename);
+
+}
+
