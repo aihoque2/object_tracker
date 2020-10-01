@@ -6,5 +6,8 @@ make
 ex: ./collect data/videos/Test21.avi results/Test21_results.csv
 
 
+g++ process_images.cpp -o process_images `pkg-config --cflags --libs opencv`
+
+
 
 

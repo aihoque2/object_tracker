@@ -348,9 +348,15 @@ void dataCollector::run(string myFilename){
 				toRecord = false;
 			}
 
+
 			Mat img;
 			add(frame, mask, img);
 			rectangle(img, boundingBoxes[i], Scalar(0,0,255), 1, 8, 0);
+			
+			//adding text
+			string textString = "object_" + to_string(i+1);
+			Point2f rectPoint(boundingBoxes[i].x, boundingBoxes[i].y-5.0);
+			putText(img, textString, rectPoint, cv::FONT_HERSHEY_DUPLEX, 0.7, CV_RGB(255, 0, 0), 2);
 
 			imshow("frame", img);
 

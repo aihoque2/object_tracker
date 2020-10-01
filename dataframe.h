@@ -34,3 +34,4 @@ class Dataframe{
 	private:
 		vector<pair<string, vector<double>>> _data;	 //in our std::pair, the string holds the column name, and the vector<long double> holds our values.
 };
+

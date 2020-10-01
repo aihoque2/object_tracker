@@ -114,11 +114,15 @@ int main(){
 
 	string filename = "data/images/Test21_1.tif";
 	Mat image = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+
 	if (!image.data){
 		cout << "ur image sux" << endl;
 		return -1;
-	}	
+	}
 
+	Mat div = process_division_circle(image);
+	vector<Vec3f> circles;	
+	HoughCircles(div, circles, CV_HOUGH_GRADIENT, 1, 150, 255, 45, 0, 60);
 	vector<Rect> rectangles = get_objects(image);
 	sort(rectangles.begin(), rectangles.end(), compareRects);
 	vector<int> swap_indices = everyOtherEven(rectangles.size());
@@ -130,7 +134,7 @@ int main(){
 		//if( find(swap_indices.begin(), swap_indices.end(), i) != swap_indices.end() ) 
 		if(i % 2 == 0){
 			if (rectangles[i].x > rectangles[i+1].x){
-				cout << "swap attempt" << endl;
+				//cout << "swap attempt" << endl;
 				Rect temp = rectangles[i];
 				rectangles[i] = rectangles[i+1];
 				rectangles[i+1] = temp;
@@ -138,9 +142,14 @@ int main(){
 		}
 		
 
-		cout << "x: "<< rectangles[i].x << " y: " << rectangles[i].y << endl;
+		//cout << "x: "<< rectangles[i].x << " y: " << rectangles[i].y << endl;
 
 		rectangle(image, rectangles[i], Scalar(0,0,255), 1, 8, 0 );
+
+		//present a circle
+		Point center = Point(circles[i][0], circles[i][1]);
+		int radius = 20;
+		circle(image, center, radius, Scalar(0,0,255), 3, LINE_AA);
 		
 	}
 

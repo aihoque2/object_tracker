@@ -132,7 +132,7 @@ int main(){
 		}
 
 		Mat img;
-		add(frame, mask, img);
+		add(frameDiv, mask, img);
 
 		imshow("frame", img);
 

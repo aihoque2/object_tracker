@@ -3,6 +3,8 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -14,7 +16,7 @@ Mat processRectDivision(Mat image){
 	//note: this takes in 1-channel images for input
 	Mat gray, smooth, dst;
 
-	cvtColor(image, gray, BGR2GRAY);// gray in case of emergency
+	cvtColor(image, gray, CV_BGR2GRAY);// gray in case of emergency
 	
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(5,5));
 	
@@ -53,10 +55,13 @@ Mat processCircDivision(Mat image){
 
 int main(){
 
-	string filename = "/data/images/Test21_1.tif";
+	string filename = "data/images/Test21_1.tif";
 
-	Mat 
+	Mat image = imread(filename);
+	Mat processed = processRectDivision(image);
 
+	imshow("processed image", processed);
+	waitKey(0);
 	return 0;
 }
 
