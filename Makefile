@@ -17,4 +17,7 @@ dataCollector.o: dataCollector.cpp dataCollector.h dataframe.cpp dataframe.h
 dataframe.o: dataframe.cpp dataframe.h
 	g++ -g -c dataframe.cpp dataframe.h 
 
+clean:
+	rm -f *.o && rm -f *.gch && rm collect
+
 
