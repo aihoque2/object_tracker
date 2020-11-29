@@ -12,12 +12,23 @@ The dataset of images looked roughly like the following:
 
 I would like to detect the squares in the image, as visualized below: 
 
-[highlighted image of the muscle strips](/readme_images/highlighted_wells.png)
+![highlighted image of the muscle strips](readme_images/highlighted_wells.png)
 
-the objects are detected with a Hough Circle Transform in openCV. They are then processed to bring out the square shape of the muscle pillars. 
+the objects are detected with a Hough Circle Transform in openCV. They are then processed to bring out the square shape of the muscle pillars. We get the points to track on the object with the Shi-Tomasi goodFeaturesToTrack() function. The points are tracked with calcOpticalFlowPyrLK().
 
 ## Demo
+To run the program, go to the head directory and do the following:
+- run `make`
+- in the directory, `./collect <video filename goes here> <output csv name goes here>`
 
+(ex: `./collect data/videos/Test21.avi results/Test21_results.csv`)
+
+- the results are stored in the location where you put the output csv
+
+The program looks like the following: 
+![Object Tracker Demo](readme_images/tracker_demo.png)
+
+One object gets tracked at a time. The detected objects' bounding boxes are stored in a `vector<Rect2f>`, and the tracker loops through the vector. I hope to parallelize this loop at some point.
 
 ## Requirements
 - C++
@@ -25,7 +36,7 @@ the objects are detected with a Hough Circle Transform in openCV. They are then 
 - OpenCV >=3.2.0
 
 ## TODO
-If I ever come back to this project, I would like to implement some other features:
+I would like to implement some other features:
 
 - Parallel tracking of multiple detected objects with OpenMP
 - Utilize my GPU for better performance in tracking
