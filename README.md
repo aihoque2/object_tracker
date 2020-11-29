@@ -12,7 +12,7 @@ The dataset of images looked roughly like the following:
 
 I would like to detect the squares in the image, as visualized below: 
 
-![highlighted image of the muscle strips](readme_images/highlighted_wells.png)
+<img src="readme_images/highlighted_wells.png" width="473" height="412">
 
 the objects are detected with a Hough Circle Transform in openCV. They are then processed to bring out the square shape of the muscle pillars. We get the points to track on the object with the Shi-Tomasi goodFeaturesToTrack() function. The points are tracked with calcOpticalFlowPyrLK().
 
