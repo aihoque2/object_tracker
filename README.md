@@ -8,15 +8,16 @@ This is an object tracker I developed to automate data collection for experiment
 ## Method
 The dataset of images looked roughly like the following:
 
-[raw image of the muscle strips](/readme_images/test21_1_wells.png)
+![raw image of the muscle strips](https://github.com/aihoque2/object_tracker/blob/master/readme_images/test21_1_wells.png?raw=true)
 
 I would like to detect the squares in the image, as visualized below: 
 
 [highlighted image of the muscle strips](/readme_images/highlighted_wells.png)
 
-the objects are detected with a Hough Circle Transform in openCV with some boundary conditions. They are then processed to bring out the squares in the muscle pillars. 
+the objects are detected with a Hough Circle Transform in openCV. They are then processed to bring out the square shape of the muscle pillars. 
 
 ## Demo
+
 
 ## Requirements
 - C++
