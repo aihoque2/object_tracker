@@ -25,8 +25,7 @@ To run the program, go to the head directory and do the following:
 
 - the results are stored in the location where you put the output csv
 
-The program looks like the following: 
-![Object Tracker Demo](readme_images/tracker_demo.png {width=473 height=412})
+<img src="readme_images/tracker_demo.png" width="473" height="412">
 
 One object gets tracked at a time. The detected objects' bounding boxes are stored in a `vector<Rect2f>`, and the tracker loops through the vector. I hope to parallelize this loop at some point.
 
