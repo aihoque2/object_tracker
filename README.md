@@ -1,6 +1,6 @@
 # object_tracker
 
-This is an object tracker I developed to automate data collection for experiments in the Biological Machines research group at Saif lab at UIUC. The purpose of this program is to track the discplacement of moving muscle pillars from video datasets. More can be read about it in the links below: 
+This is an object tracker I developed to automate data collection for experiments in the Biological Machines research group at Saif Lab at UIUC. The purpose of this program is to track the discplacement of moving muscle pillars from video datasets. The data that was collected was used to fabricate an optimal actuator for some biohybrid robots. More can be read about it in the links below: 
 
 -  https://aip.scitation.org/doi/full/10.1063/1.5134477
 -  https://www.pnas.org/content/116/40/19841
@@ -8,11 +8,11 @@ This is an object tracker I developed to automate data collection for experiment
 ## Method
 The dataset of images looked roughly like the following:
 
-![raw image of the muscle strips](https://github.com/aihoque2/object_tracker/blob/master/readme_images/test21_1_wells.png?raw=true | width=473 height=412)
+<img src="https://github.com/aihoque2/object_tracker/blob/master/readme_images/test21_1_wells.png" width="473" height="412">
 
 I would like to detect the squares in the image, as visualized below: 
 
-![highlighted image of the muscle strips](readme_images/highlighted_wells.png)
+<img src="readme_images/highlighted_wells.png" width="473" height="412">
 
 the objects are detected with a Hough Circle Transform in openCV. They are then processed to bring out the square shape of the muscle pillars. We get the points to track on the object with the Shi-Tomasi goodFeaturesToTrack() function. The points are tracked with calcOpticalFlowPyrLK().
 
@@ -25,8 +25,7 @@ To run the program, go to the head directory and do the following:
 
 - the results are stored in the location where you put the output csv
 
-The program looks like the following: 
-![Object Tracker Demo](readme_images/tracker_demo.png | width=473 height=412)
+<img src="readme_images/tracker_demo.png" width="473" height="412">
 
 One object gets tracked at a time. The detected objects' bounding boxes are stored in a `vector<Rect2f>`, and the tracker loops through the vector. I hope to parallelize this loop at some point.
 

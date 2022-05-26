@@ -166,7 +166,7 @@ vector<Rect> dataCollector::detectObjects(Mat image){
         Mat div = processCircDivision(image);
 
         //get our circles
-        HoughCircles(div, circles, CV_HOUGH_GRADIENT, 1, 150, 255, 45, 0, 60);
+        HoughCircles(div, circles, HOUGH_GRADIENT, 1, 150, 255, 45, 0, 60);
 
         for (int i = 0; i < circles.size(); i++){
                 //check for any points out of bounds

@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -g -Wall
 
-OPENCV = `pkg-config opencv --cflags --libs`
+OPENCV = `pkg-config --cflags --libs opencv4`
 LIBS = $(OPENCV)
 
 
